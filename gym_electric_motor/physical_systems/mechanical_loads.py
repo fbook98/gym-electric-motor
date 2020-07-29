@@ -402,17 +402,25 @@ class ConstantSpeedLoad(MechanicalLoad):
         """
         return self._omega
 
-    def reset(self, *_, **__):
+    def reset(self, state_space,
+              state_positions,
+              nominal_state,
+              **__):
         # Docstring from superclass
+        
+        if self._initializer:
+            super.initialize(state_space, state_positions, nominal_state)
+            self._omega = self._initial_states['omega']
+            
         return np.array([self._omega])
 
-    def __init__(self, omega_fixed=0):
+    def __init__(self, omega_fixed=0, **kwargs):
         """
         Args:
             omega_fixed(float)): Fix value for the speed in rad/s.
         """
         #self._default_initializer['states']['omega'] = omega_fixed
-        super().__init__()
+        super().__init__(**kwargs)
         self._omega = omega_fixed or self._initializer['states']['omega']
 
     def mechanical_ode(self, *_, **__):
