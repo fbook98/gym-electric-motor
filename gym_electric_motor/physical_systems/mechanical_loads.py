@@ -409,7 +409,7 @@ class ConstantSpeedLoad(MechanicalLoad):
         # Docstring from superclass
         
         if self._initializer:
-            super.initialize(state_space, state_positions, nominal_state)
+            super().initialize(state_space, state_positions, nominal_state)
             self._omega = self._initial_states['omega']
             
         return np.array([self._omega])
