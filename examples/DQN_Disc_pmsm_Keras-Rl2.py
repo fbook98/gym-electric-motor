@@ -115,7 +115,7 @@ model.add(Dense(64, activation='relu'))
 model.add(Dense(nb_actions, activation='linear'))
 
 memory = SequentialMemory(limit=200000, window_length=window_length)
-policy = LinearAnnealedPolicy(EpsGreedyQPolicy(eps=0.2), 'eps', 1, 0.05, 0, 50000)
+policy = LinearAnnealedPolicy(EpsGreedyQPolicy(eps=0.2), 'eps', 1, 0.05, 0, 100000)
 
 dqn = DQNAgent(
     model=model,
@@ -127,7 +127,8 @@ dqn = DQNAgent(
     # train_interval=1,
     # memory_interval=1,
     target_model_update=1000,
-    nb_steps_warmup=10000
+    nb_steps_warmup=10000,
+    enable_double_dqn=True
 )
 
 dqn.compile(Adam(lr=1e-4),
@@ -138,13 +139,13 @@ dqn.fit(env,
         nb_steps=500000,
         action_repetition=1,
         verbose=2,
-        visualize=False,
-        nb_max_episode_steps=50000,
+        visualize=True,
+        nb_max_episode_steps=10000,
         log_interval=1000
         )
 
 dqn.test(env,
-         nb_episodes=10,
-         nb_max_episode_steps=50000,
+         nb_episodes=3,
+         nb_max_episode_steps=100000,
          visualize=True
          )
