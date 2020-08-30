@@ -5,7 +5,7 @@ import time
 from setting_environment import set_env
 
 max_eps_steps = 10000
-simulation_steps = 1000 #500000
+simulation_steps = 500000
 gem_env = set_env()
 
 # creating tensorforce environment
@@ -53,20 +53,22 @@ agent_config = {
     'target_sync_frequency': 1000,
     'target_update_weight': 1.0}
 
-# creating agent via dictionary
-dqn_agent = Agent.create(agent=agent_config, environment=tensor_env)
-# create agent trainer
-runner = Runner(agent=dqn_agent, environment=tensor_env)
-# time training
-start_time = time.time()
-runner.run(num_timesteps=simulation_steps)
-end_time = time.time()
 
-agent_path = 'saved_agents'
-agent_name = 'dqn_64_64'
-runner.agent.save(directory=agent_path, filename=agent_name)
-runner.close()
+for i in range(5):
+    # creating agent via dictionary
+    dqn_agent = Agent.create(agent=agent_config, environment=tensor_env)
+    # create agent trainer
+    runner = Runner(agent=dqn_agent, environment=tensor_env)
+    # time training
+    start_time = time.time()
+    runner.run(num_timesteps=simulation_steps)
+    end_time = time.time()
 
-print('\n agent saved \n')
-print(f'\n Execution time of tensorforce dqn-training is:'
-      f' 'f'{end_time-start_time:.2f} seconds \n ')
+    agent_path = 'saved_agents'
+    agent_name = 'dqn_64_64'
+    runner.agent.save(directory=agent_path, filename=agent_name)
+    runner.close()
+
+    print('\n agent saved \n')
+    print(f'\n Execution time of tensorforce dqn-training is:'
+          f' 'f'{end_time-start_time:.2f} seconds \n ')
