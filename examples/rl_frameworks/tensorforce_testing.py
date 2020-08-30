@@ -63,23 +63,24 @@ dqn_agent = Agent.load(
 )
 print('\n agent loaded \n')
 
-# test agent
-tau = 1e-5
-steps = 1000000
-
-rewards = []
-# obs_hist = []
-states = []
-references = []
-
-obs = gem_env.reset()
-#obs_hist.append(obs)
-terminal = False
-cum_rew = 0
-step_counter = 0
-eps_rew = 0
-
 for i in range(5):
+
+    # test agent
+    tau = 1e-5
+    steps = 1000000
+
+    rewards = []
+    # obs_hist = []
+    states = []
+    references = []
+
+    obs = gem_env.reset()
+    #obs_hist.append(obs)
+    terminal = False
+    cum_rew = 0
+    step_counter = 0
+    eps_rew = 0
+
     for step in tqdm(range(steps)):
         #gem_env.render()
         actions = dqn_agent.act(obs, evaluation=True)
