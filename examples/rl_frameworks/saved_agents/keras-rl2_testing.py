@@ -10,7 +10,7 @@ from tensorflow.keras.optimizers import Adam
 from rl.agents.dqn import DQNAgent
 from rl.policy import LinearAnnealedPolicy, EpsGreedyQPolicy
 from rl.memory import SequentialMemory
-from setting_env import set_env
+from setting_environment import set_env
 
 # Training parameters.
 gamma = 0.99
