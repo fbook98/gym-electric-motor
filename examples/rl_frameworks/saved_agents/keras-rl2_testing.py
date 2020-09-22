@@ -29,7 +29,7 @@ model.add(Flatten(input_shape=(window_length,) + env.observation_space.shape))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(nb_actions, activation='linear'))
-model.load_weights('save_keras.hdf5')
+model.load_weights('save_model_keras.hdf5')
 
 memory = SequentialMemory(limit=200000, window_length=window_length)
 policy = LinearAnnealedPolicy(EpsGreedyQPolicy(eps=0.2), 'eps', 1, 0.05, 0, 50000)
