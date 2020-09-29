@@ -1,0 +1,52 @@
+import gym_electric_motor as gem
+from gym_electric_motor.examples.agents.MPC_GEKKO import Controller
+import numpy as np
+import gym_electric_motor as gem
+from gym_electric_motor.physical_systems import ConstantSpeedLoad
+from gym_electric_motor.physical_systems import PhysicalSystem
+from gym_electric_motor.reference_generators import MultipleReferenceGenerator, ConstReferenceGenerator, \
+    WienerProcessReferenceGenerator, SinusoidalReferenceGenerator
+from gym_electric_motor.visualization.motor_dashboard import MotorDashboard
+import numpy as np
+
+
+if __name__ == '__main__':
+
+    q_generator = SinusoidalReferenceGenerator(reference_state='i_sq')
+    d_generator = ConstReferenceGenerator('i_sd', -0.2)
+    rg = MultipleReferenceGenerator([d_generator, q_generator])
+
+
+    motor_parameter = dict(r_s=15e-3, l_d=0.37e-3, l_q=1.2e-3, psi_p=65.6e-3, p=3, j_rotor=0.06)
+    limit_values = dict(i=160 * 1.41, omega=12000 * np.pi / 30, u=450)
+    nominal_values = {key: 0.7 * limit for key, limit in limit_values.items()}
+
+
+    env = gem.make(
+            'emotor-pmsm-cont-v1',
+            visualization=MotorDashboard, visu_period=1,
+            load=ConstantSpeedLoad(omega_fixed=2000 * np.pi / 30),
+            ode_solver='scipy.solve_ivp', solver_kwargs={},
+            reference_generator=rg,
+            plotted_variables=['i_sq', 'i_sd', 'u_sq', 'u_sd'],
+            reward_function='WSE',
+            reward_weights={'i_sq': 1, 'i_sd': 1},
+            reward_power=0.5,
+            observed_states=['i_sq', 'i_sd'],
+            dead_time=False,
+            u_sup=400,
+            motor_parameter=motor_parameter,
+            limit_values=limit_values,
+            nominal_values=nominal_values,
+        )
+
+    controller = Controller.make('mpc', env, ph=5)
+
+    state, reference = env.reset()
+
+    steps = 1000
+    for i in range(steps):
+        env.render()
+        action = controller.control(state, reference)
+        (state, reference), reward, done, _ = env.step(action)
+    env.close()
